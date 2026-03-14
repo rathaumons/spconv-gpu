@@ -120,7 +120,7 @@ def run():
         indices_t = torch.from_numpy(indices)
         features_t = features_t.to(device)
         indices_t = indices_t.to(device)
-        target = torch.from_numpy(label).to(device)
+        target = torch.from_numpy(label).long().to(device)
         output = model(features_t, indices_t)
         # print(output.shape)
         loss = F.cross_entropy(output, target)
