@@ -43,7 +43,7 @@ SET SPCONV_DISABLE_JIT=1
 ECHO [INFO] Activating MSVC environment for spconv ...
 call tools\msvc_setup.bat
 ECHO [INFO] Building spconv-gpu from source ...
-python -m build --wheel --skip-dependency-check --no-isolation
+python -m build --wheel --skip-dependency-check --no-isolation >NUL 2>&1
 IF EXIST dist\*.whl (
     FOR %%F IN (dist\*.whl) DO pip install "%%F" >NUL 2>&1
     CD ..
