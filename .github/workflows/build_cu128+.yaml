@@ -111,9 +111,16 @@ jobs:
       matrix:
         python-version: ['3.11', '3.12', '3.13', '3.14']
         cuda-version: ['128', '']
-
     steps:
       - uses: actions/checkout@v6
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/share/chromium
+          docker system prune -af
       - uses: dorny/paths-filter@v2
         id: changes
         with:
@@ -125,7 +132,6 @@ jobs:
               - 'spconv/algo.py'
               - 'spconv/core.py'
               - 'pyproject.toml'
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
         with:
@@ -147,7 +153,7 @@ jobs:
           CUDA_VERSION: ${{ matrix.cuda-version }}
           PYTHON_VERSION: ${{ matrix.python-version }}
           DOCKER_IMAGE: scrin/manylinux2014-cuda:cu${{ matrix.cuda-version }}-devel-1.0.0
-          PLAT: ${{ matrix.cuda-version > '123' && 'manylinux_2_28_x86_64' || 'manylinux2014_x86_64' }}
+          PLAT: ${{ matrix.cuda-version == '128' && 'manylinux_2_24_x86_64' || 'manylinux2014_x86_64' }}
           BOOST_VERSION: boost_1_77_0
         if: |
           (env.CUDA_VERSION != '') && (
@@ -168,7 +174,6 @@ jobs:
         env:
           CUDA_VERSION: ${{ matrix.cuda-version }}
           PYTHON_VERSION: ${{ matrix.python-version }}
-          # use cu121 docker to build cpu wheel, cuda 124+ manylinux requires manylinux_2_28
           DOCKER_IMAGE: scrin/manylinux2014-cuda:cu121-devel-1.0.0
           PLAT: manylinux2014_x86_64
           BOOST_VERSION: boost_1_77_0
